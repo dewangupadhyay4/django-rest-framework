@@ -45,12 +45,23 @@ def item_detail(request, pk):
         return Response(status=status.HTTP_204_NO_CONTENT)
     
 class CustomAuthToken(ObtainAuthToken):
+    # def post(self, request, *args, **kwargs):
+    #     response = super().post(request, *args, **kwargs)
+    #     token = Token.objects.get(key=response.data['token'])
+    #     return Response({'token': token.key, 'user_id': token.user_id})
     def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
-        token = Token.objects.get(key=response.data['token'])
-        return Response({'token': token.key, 'user_id': token.user_id})
-    
-@api_view("GET")
+        serializer = self.serializer_class(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({
+            'token': token.key,
+            'user_id': user.id,
+            'username': user.username,
+        })
+
+
+@api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def protected_view(request):
     return Response({'message':' Hello you are authenticated'})
