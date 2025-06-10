@@ -127,3 +127,10 @@ class ItemListCreateView(mixins.ListModelMixin,
         return self.create(request, *args, **kwargs)
     
 
+class ItemDetailView(mixins.RetrieveModelMixin,
+                     mixins.UpdateModelMixin,
+                     mixins.DestroyModelMixin):
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+    def updadte(self, request, *args, **kwargs):
+        return self.update( request, *args, **kwargs)
