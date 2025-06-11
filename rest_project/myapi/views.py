@@ -9,7 +9,8 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-from rest_framework import generics, mixins, 
+from rest_framework import generics, mixins
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 
 @csrf_exempt
 @api_view(['GET', 'POST'])
@@ -132,5 +133,15 @@ class ItemDetailView(mixins.RetrieveModelMixin,
                      mixins.DestroyModelMixin):
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
-    def updadte(self, request, *args, **kwargs):
+    def update(self, request, *args, **kwargs):
         return self.update( request, *args, **kwargs)
+    def destroy(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+    
+class ItemListCreateView(ListCreateAPIView):
+    queryset= Item.objects.all()
+    serializer_class=ItemSerializer
+
+class ItemDetailView(RetrieveUpdateDestroyAPIView):
+    queryset=Item.objects.all()
+    serializer_class=ItemSerializer
