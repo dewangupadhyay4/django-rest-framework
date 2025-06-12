@@ -9,7 +9,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-from rest_framework import generics, mixins
+from rest_framework import generics, mixins, viewsets
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 
 @csrf_exempt
@@ -143,5 +143,9 @@ class ItemListCreateView(ListCreateAPIView):
     serializer_class=ItemSerializer
 
 class ItemDetailView(RetrieveUpdateDestroyAPIView):
+    queryset=Item.objects.all()
+    serializer_class=ItemSerializer
+
+class ItemViewSet(viewsets.ModelViewSet):
     queryset=Item.objects.all()
     serializer_class=ItemSerializer
