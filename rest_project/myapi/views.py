@@ -2,7 +2,7 @@ from django.shortcuts import render
 from .models import Item
 from .serializers import ItemSerializer
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes,action
 from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
@@ -11,6 +11,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework import generics, mixins, viewsets
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from datetime import timedelta
+from django.utils import timezone
 
 @csrf_exempt
 @api_view(['GET', 'POST'])
@@ -149,3 +151,16 @@ class ItemDetailView(RetrieveUpdateDestroyAPIView):
 class ItemViewSet(viewsets.ModelViewSet):
     queryset=Item.objects.all()
     serializer_class=ItemSerializer
+
+     @action(detail=False, methods=['get'])
+    def recent(self, request):
+        recent_items = Item.objects.filter(created_at__gte=timezone.now() - timedelta(days=7))
+        serializer = self.get_serializer(recent_items, many=True)
+        return Response(serializer.data)
+
+     @action(detail=True, methods=['post'])
+    def mark_done(self, request, pk=None):
+        item = self.get_object()
+        item.status = 'done'  # Assume you have a 'status' field
+        item.save()
+        return Response({'status': 'Item marked as done'})
