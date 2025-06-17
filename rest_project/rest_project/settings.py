@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'myapi',
     'rest_framework.authtoken',
+    'django-filters',
 ]
 
 MIDDLEWARE = [
@@ -132,6 +133,13 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.AnonRateThrottle',
         'rest_framework.throttling.UserRateThrottle',
     ],
+
+        'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
+    ],
+    
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
